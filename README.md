@@ -13,9 +13,9 @@ The board is visualized between moves, and looks like:
     BOARD
 -------------
 | O |   | X |
--------------
+----+---+----
 | X | X | O |
--------------
+----+---+----
 |   |   |   |
 -------------
 ```
