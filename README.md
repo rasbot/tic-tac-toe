@@ -4,7 +4,9 @@
   <img src="https://raw.githubusercontent.com/rasbot/tic-tac-toe/master/images/tic-tac-toe.png" width="500" height="auto"/>
 </p>
 
-A simple game of tic tac toe, built in python. To run the game, clone or download the repo. Navigate to the main folder in the terminal, and run the game file with the command "python tic-tac-toe.py"
+A simple game of tic tac toe, built in python. To run the game, clone or download the repo. Navigate to the main folder in the terminal, and run the game file with the command 
+
+> python tic-tac-toe.py
 
 You will be asked to enter the names of the two players, and the program will pick one of the two as the first player. That player can choose to be X or O.
 
