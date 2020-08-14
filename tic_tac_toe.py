@@ -16,9 +16,9 @@ def update_board(coords=None, letter=None, update_coord=None, valid=True, reset=
                    reset (bool): True to clear board
 
             Returns:
-                    coords (nested list) - Updated board coordinates
-                    board (str) - Visualization of board
-                    valid (bool) - Keep track of if the move is valid
+                    coords (nested list): Updated board coordinates
+                    board (str): Visualization of board
+                    valid (bool): Keep track of if the move is valid
     """
     if reset:
         coords = [[" ", " ", " "], [" ", " ", " "], [" ", " ", " "]]
@@ -28,9 +28,9 @@ def update_board(coords=None, letter=None, update_coord=None, valid=True, reset=
     board = f"""    BOARD
 -------------
 | {coords[0][0]} | {coords[0][1]} | {coords[0][2]} |
--------------
+----+---+----
 | {coords[1][0]} | {coords[1][1]} | {coords[1][2]} |
--------------
+----+---+----
 | {coords[2][0]} | {coords[2][1]} | {coords[2][2]} |
 -------------"""
     return coords, board, valid
