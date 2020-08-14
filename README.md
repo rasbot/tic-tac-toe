@@ -20,3 +20,9 @@ The board is visualized between moves, and looks like:
 -------------
 ```
 The players cannot place a letter on a non-empty space, and if the game is tied, the game will start over.
+
+Next steps: 
+
+* Hard code an AI to play against the player
+
+* Use reinforcement learning to train an AI to learn from the player.
