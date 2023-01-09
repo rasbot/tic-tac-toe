@@ -1,233 +1,243 @@
-"""A Tic Tac Toe game!"""
 import random
-import numpy as np
 
 
-def update_board(coords=None, letter=None, update_coord=None, valid=True, reset=False):
-    """
-    Updates the player board, or resets it depending on the value of the reset bool
+class TicTacToe:
+    """TicTacToe class. Create an instance of this class to play an amazing game
+    of tic-tac-toe!"""
+    def __init__(self):
+        """Initialize the board dict and valid coordinates."""
+        self.board_dict = {
+            1: " ",
+            2: " ",
+            3: " ",
+            4: " ",
+            5: " ",
+            6: " ",
+            7: " ",
+            8: " ",
+            9: " ",
+        }
+        self.valid_coords = list("123456789")
+        self.board = None
+        self.current_player = None
+        self.players = None
 
-            Parameters:
-                   coords (nested list): Coordinates array
-                   letter (str): Which letter to place on the board (X or O)
-                   update_coord (list): Which coordinates to update with letter
-                   valid (bool): Used to determine if the update_coord is
-                           clear or has a X or O already in play
-                   reset (bool): True to clear board
+    @staticmethod
+    def get_enter_prompt(text: str) -> str:
+        """Return an input prompt which will be displayed if the user is bad at
+        following directions.
 
-            Returns:
-                    coords (nested list): Updated board coordinates
-                    board (str): Visualization of board
-                    valid (bool): Keep track of if the move is valid
-    """
-    if reset:
-        coords = [[" ", " ", " "], [" ", " ", " "], [" ", " ", " "]]
-    else:
-        coords[update_coord[0]-1][update_coord[1]-1] = letter
-        valid = True
-    board = f"""    BOARD
+        Args:
+            text (str): Text to inject into the f-string.
+
+        Returns:
+            str: Randomized cheeky response.
+        """
+        input_prompts = [
+            f"Please hit {text} to continue...",
+            f"You need to actually hit {text} if you want to play!",
+            f"Try hitting {text} ...",
+            f"You will not move on from this prompt unless you hit {text}! Try again.",
+            "Just hit the correct key, this is not that difficult...",
+            f"OK, now actually hit {text} to continue!",
+        ]
+        return random.choice(input_prompts)
+
+    def update_board_dict(self, coord: int = None, move: str = None) -> None:
+        """Update the board_dict with 'X' or 'O' for the coord specified.
+
+        Args:
+            coord (int, optional): Coordinate of the board (nums 1-9). Defaults to None.
+            move (str, optional): Player move (X or O). Defaults to None.
+        """
+        if move:
+            self.board_dict[coord] = move
+
+    def update_board(self) -> None:
+        """Update the player board which is printed to the console."""
+        self.board = f"""    BOARD
 -------------
-| {coords[0][0]} | {coords[0][1]} | {coords[0][2]} |
+| {self.board_dict[7]} | {self.board_dict[8]} | {self.board_dict[9]} |
 ----+---+----
-| {coords[1][0]} | {coords[1][1]} | {coords[1][2]} |
+| {self.board_dict[4]} | {self.board_dict[5]} | {self.board_dict[6]} |
 ----+---+----
-| {coords[2][0]} | {coords[2][1]} | {coords[2][2]} |
+| {self.board_dict[1]} | {self.board_dict[2]} | {self.board_dict[3]} |
 -------------"""
-    return coords, board, valid
 
+    def get_player_move(self) -> int:
+        """Get the coordinate of the player move. If the player enters
+        an invalid selection (not a number 1-9) or a selection that is already
+        occupied by a previous move, they will be asked to pick another move.
 
-def change_player(players, player_int):
-    """
-    Swaps the player.
+        Returns:
+            int: Coordinate of the player move.
+        """
+        is_valid_move = False
+        while is_valid_move is False:
+            coord = input(
+                f"What is your move {self.players[self.current_player]['name']}? "
+            )
+            if coord in self.valid_coords:
+                player_coord = int(coord)
+                is_valid_move = True
+                self.valid_coords.remove(coord)
+            else:
+                print(
+                    "Please pick a valid move (number keys 1-9) that has not been played..."
+                )
+        return player_coord
 
-            Parameters:
-                    players (list): A list of strings with both player names
-                    player_int (int): Int that is either positive or negative
+    def update_from_player_move(self, player_coord: int) -> None:
+        """Update the board_dict and player board with the current player's move.
 
-            Returns:
-                    player (str): The name of the current player
-                    player_int (int): Keep track of the player int
-    """
-    player_int *= -1
-    if player_int > 0:
-        player = players[0]
-    else:
-        player = players[1]
-    return player, player_int
+        Args:
+            player_coord (int): Player coordinate of the current move.
+        """
+        self.update_board_dict(player_coord, self.players[self.current_player]["move"])
+        self.update_board()
+        print(f"\n{self.board}\n")
 
+    def change_player(self) -> None:
+        """Swap the numeric value (0 or 1) of the current player."""
+        self.current_player = 1 - self.current_player
 
-def one_round(coords, player, player_int, won, valid, d, players):
-    """
-    Play one round. Read player coordinates for next move, update the board,
-    check for a winner, and if no winner, swap players
+    def get_player_info(self) -> None:
+        """Get the player info for both players. This will store the player
+        names and their move (X or O) to a class variable dict. The randomly selected
+        current player numeric value (0 or 1) will be stored in a
+        class variable 'current_player'
+        """
+        player_1_name = input("\nPlayer 1, enter your name: ")
 
-            Parameters:
-                    coords (nested list): Coordinates array
-                    player (str): The name of the current player
-                    player_int (int): Int that is either positive or negative
-                    won (bool): Has either player won?
-                    valid (bool): Keep track of if the move is valid
-                    d (dict): Dictionary of player names / letters
-                    players (list): List of players
+        while True:
+            player_2_name = input("Player 2, enter your name: ")
+            if player_2_name == player_1_name:
+                print(
+                    "You cannot have the same name as player 1. Please pick a different name!"
+                )
+            else:
+                break
 
-            Returns:
-                    player (str): The name of the current player
-                    player_int (int): Int that is either positive or negative
-                    won (bool): Has either player won?
-                    winner (str): Which player (X or O) is a winner?
-    """
-    winner = ''
-    while True:
-        move = input(f"{player}, pick your coordinates: ")
-        move_coords = [int(move[0]), int(move[2])]
-        if move_coords[0] < 1 or move_coords[0] > 3 or move_coords[1] < 1 or move_coords[1] > 3:
-            print("Invalid coordinates, pick again!")
-            valid = False
-        elif coords[move_coords[0]-1][move_coords[1]-1] != " ":
-            print("Board position already taken. Please pick again!")
-            valid = False
-        else:
-            valid = True
-        if valid:
-            coords, board, valid = update_board(coords, d[player], move_coords)
-            break
+        self.players = {
+            0: {"name": player_1_name, "move": ""},
+            1: {"name": player_2_name, "move": ""},
+        }
 
-    print(board)
+        self.current_player = random.choice(list(self.players.keys()))
+        is_valid_xo = False
 
-    filled_row_count = 0
-    for row in coords:
-        if " " not in row:
-            filled_row_count += 1
-    if filled_row_count == 3:
-        print("There are no more moves. The game is a tie. Please play again!")
-        play_game()
-    if check_winner(coords) != False:
-        won = True
-        winner = check_winner(coords)
-    player, player_int = change_player(players, player_int)
-    return player, player_int, won, winner
+        while is_valid_xo is False:
+            first_val = input(
+                f"{self.players[self.current_player]['name']} will go first. \
+                {self.players[self.current_player]['name']}, pick either X or O: "
+            )
+            if first_val in ("X", "x"):
+                second_val = "O"
+                is_valid_xo = True
+            elif first_val in ("O", "o"):
+                second_val = "X"
+                is_valid_xo = True
+            else:
+                print(self.get_enter_prompt("'X' or 'O'"))
+        first_val = first_val.upper()
+        self.players[self.current_player]["move"] = first_val
+        self.players[1 - self.current_player]["move"] = second_val
 
+    def is_player_winner(self) -> bool:
+        """Check if the current player has a secured a win with their
+        most recent move.
 
-def check_row(row):
-    """
-    Checks a row (list) to see if all values are equal and not empty strings
-
-            Parameters:
-                    row (list): A list of strings, either " ", "X", or "O"
-
-            Returns:
-                    row[0] (str): The non-empty string of the winning letter
-                    False (bool): If the row is not a winner, return False
-    """
-    if len(set(row)) == 1 and row[0] != " ":
-        return row[0]
-    else:
+        Returns:
+            bool: True if the player has just won the game, False if not.
+        """
+        winning_coords = [
+            [1, 2, 3],
+            [4, 5, 6],
+            [7, 8, 9],
+            [1, 4, 7],
+            [2, 5, 8],
+            [3, 6, 9],
+            [1, 5, 9],
+            [3, 5, 7],
+        ]
+        player_move = self.players[self.current_player]["move"]
+        player_coords = []
+        for coord, move in self.board_dict.items():
+            if move == player_move:
+                player_coords.append(coord)
+        for i in winning_coords:
+            if set(i).issubset(player_coords):
+                return True
         return False
 
+    def is_draw(self) -> bool:
+        """Check if there are any moves left on the board.
 
-def check_winner(coords):
-    """
-    Checks if there is a winner on the board
+        Returns:
+            bool: True if there are no more valid moves left.
+        """
+        return len(self.valid_coords) == 0
 
-            Parameters:
-                    coords (nested list): Coordinates array
+    def player_move_if_no_win(self) -> bool:
+        """Complete a player move by getting the player move from the
+        console, updating the board_dict, and check if the player has
+        won. If not, switch players.
 
-            Returns:
-                    winner (str): Which player (X or O) is a winner?
-    """
-    winner = ''
-    # checks rows
-    for i in range(3):
-        res = check_row(coords[i])
-        if res != False:
-            winner = res
-            break
-
-    # checks columns
-    for i in range(3):
-        res = check_row([coords[j][i] for j in range(len(coords))])
-        if res != False:
-            winner = res
-            break
-
-    # checks diagonals
-    arr = np.array(coords)
-    res = check_row(list(np.diagonal(np.fliplr(arr))))
-    if res != False:
-        winner = res
-    res = check_row(list(arr.diagonal()))
-    if res != False:
-        winner = res
-    if winner == '':
+        Returns:
+            bool: True if the last move is a win, False if no winner.
+        """
+        player_coord = self.get_player_move()
+        self.update_from_player_move(player_coord)
+        if self.is_player_winner():
+            print(
+                f"Congratulations {self.players[self.current_player]['name']}, you won!"
+            )
+            return True
+        if self.is_draw():
+            print("No more valid moves left on the board. The game is a draw!")
+        self.change_player()
         return False
-    else:
-        return winner
+
+    def show_game_rules(self):
+        """Text rules that explain how to play the game."""
+        print(f"\n\t{'*'*10}Let's play Tic-Tac-Toe!{'*'*10}\n")
+        print(
+            """After both players enter their name, one player will be chosen at random
+to start the game. That player will chose to be 'X' or 'O'. \n
+The board will be shown after each move. \n
+To play your turn, type the number that corresponds to the position
+of the board as it looks on the 10 key representation on a keyboard, which
+looks like:"""
+        )
+        print(
+            """\n    BOARD
+-------------
+| 7 | 8 | 9 |
+----+---+----
+| 4 | 5 | 6 |
+----+---+----
+| 1 | 2 | 3 |
+-------------\n"""
+        )
+
+        entry = input("OK, hit enter to start!")
+        while entry:
+            entry = input(self.get_enter_prompt("the enter key"))
 
 
 def play_game():
     """
     Run the game. Will initialize the game board, allow players to pick their
-    names and letters (X or O), give a quick tutorial on how to place their moves,
-    and proceed with the logic to run the game.
+    names and letters (X or O), and run the game.
     """
-    coords = [[" ", " ", " "], [" ", " ", " "], [" ", " ", " "]]
-    coords, board, valid = update_board(reset=True)
-
-    player_1_name = input("Player 1, enter your name: ")
-
-    while True:
-        player_2_name = input("Player 2, enter your name: ")
-        if player_2_name == player_1_name:
-            print("You cannot have the same name as player 1. Please pick a different name!")
-        else:
-            break
-
-    players = [player_1_name, player_2_name]
-
-    first = random.choice(players)
-
-    if first == player_2_name:
-        players = [player_2_name, player_1_name]
-
-    player_int = 1
-    player = first
-    won = False
-    valid_xo = False
-
-    while valid_xo == False:
-        first_val = input(f"{first} will go first. {first}, pick either X or O: ")
-        if first_val == 'X':
-            second_val = 'O'
-            valid_xo = True
-        elif first_val == 'O':
-            second_val = 'X'
-            valid_xo = True
-        else:
-            print("Please pick a valid choice of either X or O")
-
-    d = {players[0]: first_val, players[1]: second_val}
-
-    print(f"""
-    The player board looks like:
-
-    {board}
-    """)
-    coords, board, valid = update_board(coords, 'X', [2, 1])
-    print(f"""You will enter your coordinates as row, column...such as: 2, 1
-    for the second row, first column...which will look like:
-
-    {board}""")
-    coords, board, valid = update_board(reset=True)
-
-    while won == False:
-        player, player_int, won, winner = one_round(
-            coords, player, player_int, won, valid, d, players)
-    for k, v in d.items():
-        if v == winner:
-            print(f"Winner! Player {k} is victorious!")
-
+    is_winner = False
+    tic_tac_toe_game = TicTacToe()
+    tic_tac_toe_game.show_game_rules()
+    tic_tac_toe_game.get_player_info()
+    while not is_winner:
+        is_winner = tic_tac_toe_game.player_move_if_no_win()
     choice = input("Play again? y/n: ")
-    if choice in ('y', 'Y'):
+    if choice in ("y", "Y"):
         play_game()
     else:
         print("Thank you for playing!")
